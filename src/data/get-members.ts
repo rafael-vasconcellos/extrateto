@@ -248,6 +248,17 @@ export function getDataMonth(mesReferencia?: string): string {
   }
 }
 
+export interface YearComparisonData {
+  year: number;
+  totalMembers: number;
+  membersAboveTeto: number;
+  totalAboveTeto: number;
+  averageAboveTeto: number;
+  averageTotalRemuneration: number;
+  topOrgans: { orgao: string; total: number }[];
+  topState: { estado: string; total: number };
+}
+
 export interface Anomalia {
   nome: string;
   cargo: string;
@@ -320,6 +331,123 @@ export function getAnomalias(ano: number, minVariacaoPct = 200): Anomalia[] {
     }));
   } catch (err) {
     console.error("getAnomalias error:", err);
+    return [];
+  }
+}
+
+function getYearAggregates(year: number): YearComparisonData | null {
+  try {
+    const db = openDB();
+    if (!db) return null;
+
+    const rows = db
+      .prepare(
+        `SELECT
+          COUNT(DISTINCT nome || '-' || orgao) as total_members,
+          SUM(CASE WHEN acima_teto > 0 THEN 1 ELSE 0 END) as members_above_teto,
+          SUM(acima_teto) as total_above_teto,
+          AVG(CASE WHEN acima_teto > 0 THEN acima_teto END) as average_above_teto,
+          AVG(remuneracao_total) as average_total_remuneration
+        FROM membros
+        WHERE ano_referencia = ?`
+      )
+      .get(year) as {
+        total_members: number;
+        members_above_teto: number;
+        total_above_teto: number;
+        average_above_teto: number;
+        average_total_remuneration: number;
+      } | undefined;
+
+    const topOrgansRows = db
+      .prepare(
+        `SELECT orgao, SUM(acima_teto) as total
+         FROM membros
+         WHERE ano_referencia = ? AND acima_teto > 0
+         GROUP BY orgao
+         ORDER BY total DESC
+         LIMIT 5`
+      )
+      .all(year) as { orgao: string; total: number }[];
+
+    const topStateRow = db
+      .prepare(
+        `SELECT estado, SUM(acima_teto) as total
+         FROM membros
+         WHERE ano_referencia = ? AND acima_teto > 0
+         GROUP BY estado
+         ORDER BY total DESC
+         LIMIT 1`
+      )
+      .get(year) as { estado: string; total: number } | undefined;
+
+    db.close();
+
+    if (!rows) return null;
+
+    return {
+      year,
+      totalMembers: rows.total_members || 0,
+      membersAboveTeto: rows.members_above_teto || 0,
+      totalAboveTeto: rows.total_above_teto || 0,
+      averageAboveTeto: rows.average_above_teto || 0,
+      averageTotalRemuneration: rows.average_total_remuneration || 0,
+      topOrgans: topOrgansRows.map((r) => ({ orgao: r.orgao, total: r.total })),
+      topState: topStateRow ? { estado: topStateRow.estado, total: topStateRow.total } : { estado: "", total: 0 },
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function getYearComparison(year1: number, year2: number): {
+  year1: YearComparisonData;
+  year2: YearComparisonData;
+  growth: {
+    membersAboveTeto: number;
+    totalAboveTeto: number;
+    averageAboveTeto: number;
+  };
+} | null {
+  const y1 = getYearAggregates(year1);
+  const y2 = getYearAggregates(year2);
+
+  if (!y1 || !y2) return null;
+
+  const growth = {
+    membersAboveTeto: y1.membersAboveTeto > 0
+      ? ((y2.membersAboveTeto - y1.membersAboveTeto) / y1.membersAboveTeto) * 100
+      : 0,
+    totalAboveTeto: y1.totalAboveTeto > 0
+      ? ((y2.totalAboveTeto - y1.totalAboveTeto) / y1.totalAboveTeto) * 100
+      : 0,
+    averageAboveTeto: y1.averageAboveTeto > 0
+      ? ((y2.averageAboveTeto - y1.averageAboveTeto) / y1.averageAboveTeto) * 100
+      : 0,
+  };
+
+  return { year1: y1, year2: y2, growth };
+}
+
+export function getAllYearsTrend(): YearComparisonData[] {
+  try {
+    const db = openDB();
+    if (!db) return [];
+
+    const years = db
+      .prepare("SELECT DISTINCT ano_referencia FROM membros ORDER BY ano_referencia")
+      .all() as { ano_referencia: number }[];
+
+    const results: YearComparisonData[] = [];
+
+    for (const { ano_referencia } of years) {
+      const agg = getYearAggregates(ano_referencia);
+      if (agg) results.push(agg);
+    }
+
+    db.close();
+    return results;
+  } catch {
     return [];
   }
 }

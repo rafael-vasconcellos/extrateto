@@ -13,18 +13,20 @@ import {
   Info,
   Menu,
   X,
+  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { useState } from "react";
 
 const NAV_GROUPS = [
-  {
+{
     label: "Dados",
     links: [
       { href: "/", label: "Ranking", icon: Trophy },
       { href: "/mapa", label: "Mapa", icon: Map },
       { href: "/estatisticas", label: "Estatísticas", icon: BarChart3 },
+      { href: "/comparativo", label: "Comparativo", icon: TrendingUp },
       { href: "/orgao", label: "Órgãos", icon: Building2 },
       { href: "/anomalias", label: "Anomalias", icon: AlertTriangle },
     ],
