@@ -78,10 +78,12 @@ O projeto coleta dados públicos da API do [DadosJusBr](https://dadosjusbr.org/)
 ---
 
 ## Getting Started
+Existem duas formas de realizar o build/deploy do projeto: Nativo e via Docker:
 
+## Modo nativo:
 ### Pré-requisitos
 
-- [Node.js](https://nodejs.org/) >= 18
+- [Node.js](https://nodejs.org/) >= 20
 - [npm](https://www.npmjs.com/) >= 9
 
 ### Instalação
@@ -109,11 +111,17 @@ npm run db:sync
 # Sincronizar um mês específico
 npx tsx scripts/sync-data.ts --year 2025 --month 1
 
-# Sincronizar todos os meses disponíveis
+# Sincronizar todos os meses disponíveis (desde 2024)
 npx tsx scripts/sync-data.ts --all
 
 # Forçar re-sincronização (sobrescreve dados existentes)
 npx tsx scripts/sync-data.ts --year 2025 --month 1 --force
+
+# Sincronizar todos os meses de um ano específico
+npx tsx scripts/sync-data.ts --year 2024
+
+# Sincronizar desde um ano específico até o mês atual
+npx tsx scripts/sync-data.ts --year 2024 --all
 ```
 
 ### Rodando o projeto
@@ -128,6 +136,42 @@ npm start
 ```
 
 Abra [http://localhost:3000](http://localhost:3000) no navegador.
+
+---
+
+## Docker
+
+### Build
+
+```bash
+docker build -t extrateto .
+```
+
+### Rodando o projeto
+
+```bash
+# Com persistência dos dados
+docker run -v $(pwd)/data:/app/data -p 3000:3000 extrateto
+```
+
+### Sincronizar dados dentro do container
+
+```bash
+# Sincronizar dados reais (mês atual)
+docker exec -it <container> tsx scripts/sync-data.ts
+
+# Seed com dados mock
+docker exec -it <container> tsx scripts/sync-data.ts --seed
+
+# Sincronizar todos os meses de um ano
+docker exec -it <container> tsx scripts/sync-data.ts --year 2024
+
+# Sincronizar desde 2024 até o mês atual
+docker exec -it <container> tsx scripts/sync-data.ts --year 2024 --all
+
+# Forçar re-sincronização
+docker exec -it <container> tsx scripts/sync-data.ts --year 2024 --force
+```
 
 ---
 

@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Next.js
+.next
+out
+
+# Build
+dist
+build
+
+# Data (keep directory but not contents)
+# data/
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Test/Coverage
+coverage
+.nyc_output
+
+# Logs
+*.log
+logs
+
+# Misc
+.DS_Store
+Thumbs.db
