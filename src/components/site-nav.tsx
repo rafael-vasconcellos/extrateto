@@ -51,6 +51,8 @@ export function SiteNav() {
       <div className="fixed left-0 right-0 top-0 z-50 flex h-12 items-center border-b border-gray-100 bg-white px-4 lg:hidden">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={mobileOpen}
           className="flex h-8 w-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -64,6 +66,7 @@ export function SiteNav() {
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
+          aria-hidden="true"
           className="fixed inset-0 z-40 bg-black/30 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
@@ -71,6 +74,7 @@ export function SiteNav() {
 
       {/* Sidebar */}
       <nav
+        aria-label="Navegação principal"
         className={cn(
           "fixed left-0 top-0 z-40 flex h-full w-56 flex-col border-r border-gray-100 bg-white transition-transform duration-200 lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full"

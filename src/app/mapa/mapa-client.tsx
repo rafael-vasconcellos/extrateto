@@ -63,7 +63,7 @@ export function MapaClient({ members, availableYears, currentYear }: MapaClientP
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main id="main-content" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <Link
           href="/"
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-navy"
@@ -184,7 +184,7 @@ export function MapaClient({ members, availableYears, currentYear }: MapaClientP
             </div>
           </div>
         </div>
-      </div>
+      </main>
       <Footer />
     </div>
   );

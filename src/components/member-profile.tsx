@@ -71,7 +71,7 @@ export function MemberProfileView({ member }: { member: MemberProfile }) {
 
   return (
     <div className="min-h-screen bg-gray-50/30">
-      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
+      <main id="main-content" className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Back */}
         <Link
           href="/"
@@ -458,7 +458,7 @@ export function MemberProfileView({ member }: { member: MemberProfile }) {
           </a>{" "}
           · Referência: {formatMonthLabel(member.mesRecente)}
         </p>
-      </div>
+      </main>
     </div>
   );
 }

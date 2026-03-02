@@ -68,6 +68,12 @@ export default function RootLayout({
       >
         <JsonLd data={getWebsiteJsonLd()} />
         <JsonLd data={getDatasetJsonLd()} />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-gray-900 focus:ring-2 focus:ring-blue-500 focus:rounded"
+        >
+          Pular para o conteúdo
+        </a>
         <SiteNav />
         <div className="pt-12 lg:pl-56 lg:pt-0">
           {children}

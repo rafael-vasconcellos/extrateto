@@ -105,7 +105,7 @@ export function HomeClient({ members, dataMonth, availableMonths, currentMonth }
         dataMonth={dataMonth}
       />
 
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+      <main id="main-content" className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
         {/* KPIs */}
         <section className="mb-6">
           <KPICards data={kpis} />

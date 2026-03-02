@@ -5,7 +5,7 @@ import { Footer } from "@/components/footer";
 export default function MetodologiaPage() {
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <main id="main-content" className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <Link
           href="/"
           className="mb-8 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-navy"
@@ -161,7 +161,7 @@ export default function MetodologiaPage() {
             </ul>
           </section>
         </div>
-      </div>
+      </main>
       <Footer />
     </div>
   );
