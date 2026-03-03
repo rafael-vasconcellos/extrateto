@@ -1,20 +1,23 @@
+version: "3.9"
+
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: open-data-analysis
-    restart: always
+    container_name: extrateto-api
+    restart: unless-stopped
     ports:
       - "3000:3000"
+
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - HOSTNAME=0.0.0.0
-      - DB_INIT=seed
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+
     volumes:
-      - extrateto_data:/app/data
-      
+      - ./data:/app/data
+
     command: >
       sh -c '
         if [ "$$DB_INIT" = "seed" ]; then
@@ -24,15 +27,13 @@ services:
           echo "Sincronizando dados reais da API..."
           tsx scripts/sync-data.ts --year 2024 --all
         else
-          echo "Iniciando sem sinc  de dados."
-        fi && 
-        node server.js
+          echo "Iniciando sem sincronização de dados."
+        fi &&
+        node ./server.js
       '
+
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-volumes:
-  extrateto_data:
